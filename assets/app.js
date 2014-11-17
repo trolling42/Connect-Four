@@ -24,13 +24,50 @@ var board = {
     context.fill();
   },
 
-  checkWin: function() {
+  getPositiveSlopeSum: function(x, y) {
     'use strict';
+    var counter = '', i, j, xstart, ystart;
+    if (x > y) {
+      xstart = x - y;
+      ystart = 0;
+    } else {
+      xstart = 0;
+      ystart = y - x;
+    }
+
+    for (i = xstart, j = ystart; i < 6 && j < 7; i += 1, j += 1) {
+      counter += this.status[j][i];
+    }
+    
+    return counter;
+  },
+
+  getNegativeSlopeSum: function(x, y) {
+    'use strict';
+    var counter = '', i, j, xstart, ystart;
+    if (x > y) {
+      xstart = x - y;
+      ystart = 0;
+    } else {
+      xstart = 0;
+      ystart = y - x;
+    }
+
+    for (i = xstart, j = ystart; i < 6 && j < 7; i += 1, j -= 1) {
+      counter += this.status[j][i];
+    }
+
+    return counter;
+  },
+
+  checkWin: function(y, x) {
+    'use strict';
+    var i, j;
     // Check Rows
     var counter = '';
-    for (var i = 0; i < 6; i += 1) {
-      for (var j = 0; j < 7; j += 1) {
-        counter += this.status[i][j];
+    for (i = 0; i < 6; i += 1) {
+      for (j = 0; j < 7; j += 1) {
+        counter += this.status[j][i];
       }
       if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
         alert("win");
@@ -40,15 +77,29 @@ var board = {
     }
 
     // Check columns
-    for (var j = 0; j < 7; j += 1) {
-      for (var i = 0; i < 6; i += 1) {
-        counter += this.status[i][j];
+    for (j = 0; j < 7; j += 1) {
+      for (i = 0; i < 6; i += 1) {
+        counter += this.status[j][i];
       }
       if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
-        alert("win");
+        alert("win col");
         return;
       }
       counter = '';
+    }
+
+    // Check diagonals - positive slope values
+    counter = this.getPositiveSlopeSum(x, y);
+    if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
+      alert("win");
+      return;
+    }
+
+    // Check diagonals - positive slope values
+    counter = this.getNegativeSlopeSum(x, y);
+    if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
+      alert("win");
+      return;
     }
 
   },
@@ -122,12 +173,14 @@ var board = {
       alert('Please choose another column');
     }
 
-    this.checkWin();
+    this.checkWin(column-1, availableCell);
   },
 
   initGrid: function() {
     'use strict';
     var row, col;
+
+    this.status = [];
 
     for (col = 0; col < 7; col += 1) {
       this.status[col] = [0, 0, 0, 0, 0, 0];
