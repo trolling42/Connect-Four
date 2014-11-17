@@ -26,11 +26,22 @@
       </div>
     </header>
 
-    <div class="canvas-container">
-        <canvas id="board" width="500" height="500" class="board"></canvas>
+<div class="canvas-container">
+    <div class='rules'>
+        <h3>How to Play</h3>
+        <ul>
+        <li>Each player alternates dropping coins into the grid.</li>
+        <li>Click on the column where you want to drop the coin.</li>
+        <li>Who ever makes four coins of the same color horizontally,vertically or diagonally wins.</li>
+        </ul>
     </div>
-    <canvas id="player" width="200" height="200" class="player"></canvas>
-    <script type="text/javascript" src="assets/app.js" ></script>
+    <canvas id="board" width="500" height="500" class="board"></canvas>
+    <div class="player">
+        <h3>Current Player</h3>
+        <canvas id="player" width="200" height="200"></canvas>
+    </div>
+</div>
+<script type="text/javascript" src="assets/app.js" ></script>
 
 
             <script type="text/javascript">
