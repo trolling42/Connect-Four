@@ -1,0 +1,12 @@
+body {
+    background-color: rgb(255, 255, 255);
+}
+
+.canvas-container {
+    width: 100%;
+    text-align: center;
+}
+
+.board {
+    display: inline;
+}
