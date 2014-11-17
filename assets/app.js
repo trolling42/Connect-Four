@@ -1,5 +1,7 @@
 var canvas = document.getElementById('board'),
-  context = canvas.getContext('2d');
+  context = canvas.getContext('2d'),
+  displayCanvas = document.getElementById('player'),
+  ctx = displayCanvas.getContext('2d');
 
 var board = {
 
@@ -45,16 +47,16 @@ var board = {
   getNegativeSlopeSum: function(x, y) {
     'use strict';
     var counter = '', i, j, xstart, ystart;
-    if (x > y) {
-      xstart = x - y;
+    if (x + y < 6) {
+      xstart = x + y;
       ystart = 0;
     } else {
-      xstart = 0;
-      ystart = y - x;
+      xstart = 6;
+      ystart = x + y - 6;
     }
 
-    for (i = xstart, j = ystart; i < 6 && j < 7; i += 1, j -= 1) {
-      counter += this.status[j][i];
+    for (i = xstart, j = ystart; i >= 0 && j < 6; i -= 1, j += 1) {
+      counter += this.status[i][j];
     }
 
     return counter;
@@ -63,26 +65,34 @@ var board = {
   checkWin: function(y, x) {
     'use strict';
     var i, j;
-    // Check Rows
+    // Check Rows - Can be optimized to just check on the row that the move was made
     var counter = '';
     for (i = 0; i < 6; i += 1) {
       for (j = 0; j < 7; j += 1) {
         counter += this.status[j][i];
       }
       if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
-        alert("win");
+        if (counter.indexOf('RRRR') !== -1) {
+            alert("Player Red won with 4 in a row. Please refresh the page to start a new game");
+        } else {
+            alert("Player Yellow won with 4 in a row. Please refresh the page to start a new game");
+        }
         return;
       }
       counter = '';
     }
 
-    // Check columns
+    // Check columns - Can be optimized to just check on the column that the move was made
     for (j = 0; j < 7; j += 1) {
       for (i = 0; i < 6; i += 1) {
         counter += this.status[j][i];
       }
       if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
-        alert("win col");
+          if (counter.indexOf('RRRR') !== -1) {
+              alert("Player Red won with 4 in a column. Please refresh the page to start a new game");
+          } else {
+              alert("Player Yellow won with 4 in a column. Please refresh the page to start a new game");
+          }
         return;
       }
       counter = '';
@@ -91,15 +101,22 @@ var board = {
     // Check diagonals - positive slope values
     counter = this.getPositiveSlopeSum(x, y);
     if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
-      alert("win");
-      return;
+        if (counter.indexOf('RRRR') !== -1) {
+            alert("Player Red won with 4 in a diagonal. Please refresh the page to start a new game");
+        } else {
+            alert("Player Yellow won with 4 in a diagonal. Please refresh the page to start a new game");
+        }
+        return;
     }
 
-    // Check diagonals - positive slope values
+    // Check diagonals - negative slope values
     counter = this.getNegativeSlopeSum(x, y);
     if (counter.indexOf('RRRR') !== -1 || counter.indexOf('YYYY') !== -1) {
-      alert("win");
-      return;
+        if (counter.indexOf('RRRR') !== -1) {
+            alert("Player Red won with 4 in a diagonal. Please refresh the page to start a new game");
+        } else {
+            alert("Player Yellow won with 4 in a diagonal. Please refresh the page to start a new game");
+        }
     }
 
   },
@@ -115,7 +132,7 @@ var board = {
     'use strict';
 
     var xpos = event.offsetX,
-      ypos = event.offsetY, length = 50, column;
+      length = 50, column;
 
     column = parseInt(xpos/50);
     column = (column <= 7 && column > 0) ? column : ((column === 0) ? 1 : 7);
@@ -141,11 +158,20 @@ var board = {
     }
   },
 
+  thisPlay: function() {
+    'use strict';
+      ctx.fillStyle = this.currentPlayer;
+      ctx.beginPath();
+      ctx.arc(100, 100, 45, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fill();
+  },
+
   // Drop the disc into the column if the user clicks on the column.
   dropDisc: function(event) {
     'use strict';
     var xpos = event.offsetX,
-      ypos = event.offsetY, row, column, availableCell, radius = 25, length = 50, color;
+      column, availableCell, radius = 25, length = 50, color;
 
     if (this.currentPlayer === this.player1) {
       color = 'R';
@@ -153,7 +179,6 @@ var board = {
       color = 'Y';
     }
 
-    row = parseInt(ypos/50);
     column = parseInt(xpos/50);
     availableCell = this.getNextAvailableCell(column);
 
@@ -168,6 +193,7 @@ var board = {
 
       this.clearAll();
       this.currentPlayer = (this.currentPlayer === this.player1) ? this.player2 : this.player1;
+      this.thisPlay();
       this.createArrow(event);
     } else {
       alert('Please choose another column');
@@ -185,6 +211,8 @@ var board = {
     for (col = 0; col < 7; col += 1) {
       this.status[col] = [0, 0, 0, 0, 0, 0];
     }
+
+    this.thisPlay();
 
     canvas.addEventListener('mousemove', function(event) {
       board.createArrow(event);

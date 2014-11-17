@@ -5,6 +5,21 @@ body {
 .canvas-container {
     width: 100%;
     text-align: center;
+    margin-left: 100px;
+    font-family: "Arimo", "Overpass", Helvetica, Arial, sans-serif;
+}
+
+.board {
+    float: left;
+}
+
+.player {
+    float: left;
+}
+
+.rules {
+    float: left;
+    text-align: left;
 }
 
 .board {
